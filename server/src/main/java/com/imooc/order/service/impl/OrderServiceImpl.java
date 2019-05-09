@@ -1,6 +1,6 @@
 package com.imooc.order.service.impl;
 
-import com.imooc.order.client.ProductClient;
+
 import com.imooc.order.dataobject.OrderDetail;
 import com.imooc.order.dataobject.OrderMaster;
 import com.imooc.order.dataobject.ProductInfo;
@@ -12,9 +12,11 @@ import com.imooc.order.repository.OrderDetailRepository;
 import com.imooc.order.repository.OrderMasterRepository;
 import com.imooc.order.service.OrderService;
 import com.imooc.order.utils.KeyUtil;
+import com.imooc.product.client.ProductClient;
+import com.imooc.product.common.DecreaseStockInput;
+import com.imooc.product.common.ProductInfoOutput;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
@@ -43,22 +45,22 @@ public class OrderServiceImpl implements OrderService {
     List<String> productIds = orderDTO.getOrderDetailList().stream()
         .map(OrderDetail::getProductId)
         .collect(Collectors.toList());
-    List<ProductInfo> productInfoList = productClient.listForOrder(productIds);
+    List<ProductInfoOutput> productInfoOutputList = productClient.listForOrder(productIds);
 
 
     //计算商品总价
     BigDecimal orderAmount = new BigDecimal(BigInteger.ZERO);
     for (OrderDetail orderDetail : orderDTO.getOrderDetailList()){
-      for (ProductInfo productInfo : productInfoList) {
-        if (! productInfo.getProductId().equals(orderDetail.getProductId())){
+      for (ProductInfoOutput productInfoOutput : productInfoOutputList) {
+        if (! productInfoOutput.getProductId().equals(orderDetail.getProductId())){
           continue;
         }
-        orderAmount = productInfo
+        orderAmount = productInfoOutput
             .getProductPrice()
             .multiply(new BigDecimal(orderDetail.getProductQuantity()))
             .add(orderAmount);
 
-        BeanUtils.copyProperties(productInfo, orderDetail);
+        BeanUtils.copyProperties(productInfoOutput, orderDetail);
         orderDetail.setOrderId(orderId);
         orderDetail.setDetailId(KeyUtil.genUniqueKey());
         //订单详情入库
@@ -68,10 +70,10 @@ public class OrderServiceImpl implements OrderService {
 
 
     //扣库存(调用商品服务)
-    List<CartDTO> cartDTOList = orderDTO.getOrderDetailList()
-        .stream().map(e -> new CartDTO(e.getProductId(), e.getProductQuantity()))
+    List<DecreaseStockInput> decreaseStockInputList = orderDTO.getOrderDetailList()
+        .stream().map(e -> new DecreaseStockInput(e.getProductId(), e.getProductQuantity()))
         .collect(Collectors.toList());
-    productClient.decreaseStock(cartDTOList);
+    productClient.decreaseStock(decreaseStockInputList);
 
     //订单入库
     OrderMaster orderMaster = new OrderMaster();

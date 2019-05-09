@@ -1,8 +1,9 @@
 package com.imooc.order.controller;
 
-import com.imooc.order.client.ProductClient;
-import com.imooc.order.dataobject.ProductInfo;
-import com.imooc.order.dto.CartDTO;
+
+import com.imooc.product.client.ProductClient;
+import com.imooc.product.common.DecreaseStockInput;
+import com.imooc.product.common.ProductInfoOutput;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ public class ClientController {
   @Autowired
   private ProductClient productClient;
 
-
   @GetMapping("/getProductMsg")
   public String getProductMsg() {
     RestTemplate restTemplate = new RestTemplate();
@@ -35,20 +35,15 @@ public class ClientController {
     return response;
   }
 
-  @GetMapping("getProductMsg1")
-  public String getProductMsg1() {
-    String response = productClient.productMsg();
-    return response;
-  }
 
   @GetMapping("/getProductList")
-  public List<ProductInfo> getProductList() {
+  public List<ProductInfoOutput> getProductList() {
     return productClient.listForOrder(Arrays.asList("164103465734242707"));
   }
 
   @GetMapping("/productDescreaseStock")
   public String descreaseStock() {
-    productClient.decreaseStock(Arrays.asList(new CartDTO("164103465734242707", 3)));
+    productClient.decreaseStock(Arrays.asList(new DecreaseStockInput("164103465734242707", 3)));
     return "ok";
   }
 

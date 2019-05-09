@@ -29,11 +29,22 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.imooc</groupId>
+            <artifactId>order-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.imooc</groupId>
+            <artifactId>product-client</artifactId>
+        </dependency>
+
+
         <!-- Feign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-feign</artifactId>
-            <version>RELEASE</version>
         </dependency>
 
         <!-- jpa -->
@@ -48,12 +59,6 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
-        <!-- gson -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-
         <!-- fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -61,10 +66,11 @@
             <version>1.2.55</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.imooc</groupId>
-            <artifactId>order-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+
+      <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-openfeign-core</artifactId>
+            <version>2.1.0.RELEASE</version>
         </dependency>
     </dependencies>
 
